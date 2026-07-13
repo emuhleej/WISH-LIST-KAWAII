@@ -1,0 +1,25 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local dependency/build folders
+node_modules/
+dist/
+build/
+.firebase/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Local Firebase CLI state
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Keep firebase-config.js committed for GitHub Pages.
+# Firebase web config is public client config, not an admin secret.
