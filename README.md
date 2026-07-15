@@ -1,36 +1,51 @@
-# Household Emergency Hub
+# Curated Wish List
 
-A shared emergency info app for Em & Hameed - contacts, medical profiles,
-doctors, insurance documents, and pet records with vaccine uploads, synced
-in real time between both phones via Firebase.
-
-## Entry code
-The app opens to a keypad lock screen. Code: **2580**.
-It stays unlocked until the app is fully closed. The code is never stored
-in the page in readable form, and your Firestore data path is derived from
-it - the wrong code can't reach the data.
-
-## Pages
-- **Contacts** - people & work numbers, split Em / Hameed, with one-tap
-  Call / Text / Copy and search
-- **Medical** - profiles (DOB, blood type, allergies, conditions),
-  medications, and each person's doctors
-- **Documents** - insurance card photos/PDFs plus policy-number notes,
-  per person
-- **Pets** - shared vet contacts, then a card per pet: profile, microchip,
-  meds, vaccine & record uploads with Share
-
-## Everyday use
-- Tap **Edit** in the header to reveal all add/rename/delete controls;
-  **Done** locks it back to view mode.
-- Photos are compressed automatically on upload so they sync fast.
-- The header pill shows sync status: **Local**, **Synced**, or **Sync error**.
-- Changes made on one phone appear on the other within seconds once
-  Firebase setup (DEPLOY.md Part 2) is complete.
-- Add the page to both home screens (Safari: Share -> Add to Home Screen)
-  so it opens fullscreen like an app.
+An interactive, Notion-friendly wish list for saving products with links, pictures, prices, priorities, categories, notes, and shopping search shortcuts.
 
 ## Files
-- `index.html` - the entire app, self-contained, Firebase config included
-- `DEPLOY.md` - GitHub Pages + Firebase setup steps
-- `.nojekyll` - tells GitHub Pages to serve files as-is
+
+- `index.html` - the complete wish list app.
+- `firebase-config.js` - optional Firebase config for cross-device sync.
+- `firebase-config.example.js` - copy-safe config template.
+- `firebase.json` - Firebase Hosting and Firestore setup.
+- `firestore.rules` - Firestore access rules for anonymous signed-in users.
+- `firestore.indexes.json` - empty index file required by Firebase deploys.
+- `DEPLOY.md` - setup steps for GitHub Pages, Notion, and optional Firebase.
+- `.gitignore` - keeps local/editor/Firebase cache files out of Git.
+- `.nojekyll` - keeps GitHub Pages from changing how the site is served.
+
+## Features
+
+- Search product ideas across Google Shopping, Amazon, Target, Etsy, Walmart, and Pinterest.
+- Save items with a product link, image link, price, store, category, priority, recipient, and notes.
+- Filter by status, category, priority, recipient, and text search.
+- Track total estimated cost and saved/purchased counts.
+- Copy a Notion-friendly markdown list.
+- Import/export JSON backups.
+- Works locally right away, with optional Firebase sync.
+
+## Git-Friendly Notes
+
+Commit the whole folder as a static site. `firebase-config.js` can stay in Git with placeholder values; Firebase web app config is public client config, not an admin secret. Never commit Firebase service account keys or private admin credentials.
+
+Suggested first commit:
+
+```bash
+git init
+git add .
+git commit -m "Add kawaii wish list app"
+```
+
+## Firebase-Friendly Notes
+
+The app works without Firebase. To turn on sync, add your Firebase web app config to `firebase-config.js`, enable Anonymous Auth, create Firestore, then deploy the included `firestore.rules`.
+
+The shared document path is:
+
+```txt
+shopping/curated-wish-list
+```
+
+## Notion Use
+
+After GitHub Pages publishes the site, paste the public URL into Notion and choose `Embed`.
