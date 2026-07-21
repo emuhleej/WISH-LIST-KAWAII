@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curated Wish List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Titan+One&display=swap" rel="stylesheet">
+<script src="firebase-config.js"></script>
+<style>
+:root{
+  --bg:#f7f1f6;
+  --paper:#fffdfb;
+  --panel:#fffdfb;
+  --ink:#31283d;
+  --muted:#7b6f83;
+  --line:#eadde8;
+  --line-strong:#d7bfd1;
+  --accent:#ca5d8f;
+  --accent-dark:#963f6b;
+  --accent-soft:#fde8f1;
+  --sky:#bde8f1;
+  --sky-soft:#eef9fb;
+  --sage:#9bd5bf;
+  --sage-soft:#edf8f2;
+  --violet:#8b7bd8;
+  --violet-soft:#f0edff;
+  --pink-soft:#fdeafa;
+  --coral:#ef897c;
+  --coral-soft:#fff0ed;
+  --gold:#d9a441;
+  --gold-soft:#fff7df;
+  --screen:#31283d;
+  --shadow:0 16px 38px rgba(49,40,61,.1);
+  --radius:8px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    linear-gradient(180deg,#fffdfb 0,#f9f3f8 42%,#eef9fb 100%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"M PLUS Rounded 1c","Arial Rounded MT Bold","Trebuchet MS",Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.5;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+h1{
+  font-size:46px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:0;
+  color:#fff;
+}
+h2{font-size:22px;letter-spacing:.01em;font-weight:900}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.app{max-width:1160px;margin:0 auto;padding:22px 16px 96px}
+.topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;margin-bottom:14px;background:linear-gradient(135deg,#31283d 0,#6d6084 48%,#ca5d8f 100%);border-radius:18px;box-shadow:var(--shadow);padding:24px;overflow:hidden}
+.brand{display:flex;align-items:center;gap:11px}
+.eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#f8d9e7}
+.status{border:1px solid rgba(255,255,255,.44);background:rgba(255,255,255,.9);border-radius:999px;padding:7px 11px;color:var(--accent-dark);font-size:13px;font-weight:850;white-space:nowrap}
+.sub{color:var(--muted);max-width:70ch;margin-top:8px}
+.topbar .sub{color:#f9e8f1;max-width:58ch}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:14px;margin-bottom:14px;align-items:stretch}
+.hero-main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel,.card,.stat,.drawer,.product-page{background:rgba(255,253,251,.98);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius)}
+.quick{padding:14px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;align-items:end;height:100%;min-width:0}
+.form-head{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+.form-head .sub{margin:0;font-size:13px;max-width:54ch}
+.form-summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.optional-fields{grid-column:1/-1;display:none;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;border-top:1px dashed var(--line);padding-top:10px}
+.optional-fields.open{display:grid}
+.field{display:flex;flex-direction:column;gap:5px}
+.span-2{grid-column:span 2}
+.span-3{grid-column:span 3}
+.span-4{grid-column:span 4}
+.span-5{grid-column:span 5}
+.span-6{grid-column:span 6}
+.span-7{grid-column:span 7}
+.span-12{grid-column:1/-1}
+.field label{font-size:12px;font-weight:900;color:var(--accent-dark);letter-spacing:.04em}
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  padding:10px 11px;
+  outline:none;
+}
+textarea{min-height:42px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(233,111,174,.18)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.row>.field{flex:1 1 150px}
+.btn{
+  border:1px solid transparent;
+  border-radius:999px;
+  padding:10px 14px;
+  min-height:39px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  background:#fff;
+  color:var(--ink);
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 8px 18px rgba(49,40,61,.08);
+}
+.btn.primary{background:linear-gradient(135deg,#ca5d8f,#8b7bd8);border-color:rgba(255,255,255,.7);color:#fff}
+.btn.primary:hover{background:var(--accent-dark)}
+.btn.soft{background:var(--accent-soft);color:var(--accent-dark)}
+.btn.sage{background:var(--sage-soft);color:#43836f;border-color:#98ded0}
+.btn.ghost{border-color:var(--line);background:#fff}
+.btn.small{min-height:32px;padding:6px 9px;font-size:13px}
+.btn.danger{background:var(--coral-soft);border-color:#ffb5c0;color:#ad4d62}
+.btn.disabled{opacity:.58;pointer-events:none}
+.search-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-self:end}
+.search-links .btn{
+  min-width:0;
+  padding-inline:10px;
+  border-color:var(--line-strong);
+  background:linear-gradient(180deg,#fff,#fff7fb);
+  color:var(--accent-dark);
+  box-shadow:0 8px 18px rgba(49,40,61,.07);
+}
+.search-links .btn:hover{background:var(--accent-soft);border-color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0}
+.stat{padding:13px;background:#fff}
+.stat .num{font-size:24px;font-weight:900;letter-spacing:0;color:var(--accent-dark)}
+.stat .lbl{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.stat.price-watch .num{color:#43836f}
+.toolbar{padding:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-items:end;margin-bottom:0;min-width:0}
+.toolbar .field:first-child{grid-column:1/-1}
+.toolbar input,.toolbar select{min-width:0}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 10px}
+.section-head .sub{margin:0;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.card{overflow:hidden;display:flex;flex-direction:column;min-height:100%;transition:transform .16s ease,box-shadow .16s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(49,40,61,.14)}
+.card.purchased{filter:grayscale(.9);opacity:.6}
+.card.purchased:hover{filter:grayscale(.7);opacity:.8}
+.photo{aspect-ratio:1.06;background:linear-gradient(135deg,#eef9fb,#fff4f8);border-bottom:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo .empty{color:var(--muted);font-size:13px;font-weight:800;text-align:center;padding:20px}
+.body{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}
+.meta{display:flex;gap:7px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:900;background:var(--accent-soft);border:1px solid #f0bdd3;color:var(--accent-dark)}
+.pill.sage{background:var(--sky-soft);border-color:#a5e8ff;color:#437c93}
+.pill.status-pill{background:var(--violet-soft);border-color:#c7c0ff;color:#6558d6}
+.pill.pink{background:var(--pink-soft);border-color:#efb5ef;color:#8a4b9d}
+.pill.gold{background:var(--gold-soft);border-color:#f0d98d;color:#87620f}
+.title{font-weight:900;font-size:18px;line-height:1.25;overflow-wrap:anywhere}
+.title-button{appearance:none;border:0;background:transparent;color:var(--accent-dark);font:inherit;font-weight:900;text-align:left;padding:0;text-decoration:none;cursor:pointer}
+.title-button:hover{text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:#bde8f1}
+.details{color:var(--muted);font-size:14px}
+.price-panel{display:grid;gap:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.price-line{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.price-current{font-size:20px;font-weight:900;color:var(--accent-dark)}
+.price-target{font-size:12px;color:var(--muted);font-weight:850;text-align:right}
+.price-watch-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.price-mini{border-radius:8px;background:var(--sky-soft);padding:6px 7px}
+.price-mini:nth-child(2){background:var(--sage-soft)}
+.price-mini:nth-child(3){background:var(--violet-soft)}
+.price-mini .k{display:block;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.price-mini .v{display:block;font-size:13px;font-weight:900;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.price-delta{font-size:12px;font-weight:900;color:var(--muted)}
+.price-delta.good{color:#43836f}
+.price-delta.warn{color:#ad4d62}
+.sparkline{height:42px;display:flex;align-items:end;gap:4px;padding-top:4px;border-top:1px solid var(--line)}
+.spark-bar{flex:1;min-width:7px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#ff83bd,#9de5ff)}
+.spark-note{font-size:11px;color:var(--muted);font-weight:800}
+.notes{font-size:14px;color:var(--ink);white-space:pre-wrap;background:#fff;border:1px dashed var(--line);border-radius:7px;padding:8px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
+.actions .danger{grid-column:1/-1}
+.empty-state{padding:26px;text-align:center;color:var(--muted)}
+.drawer{padding:16px;margin-top:16px;display:none}
+.drawer.open{display:block}
+.drawer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.footer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.mobile-add{display:none;position:fixed;right:14px;bottom:18px;z-index:9}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--accent-dark);color:#fff;padding:10px 13px;border-radius:999px;font-weight:800;font-size:13px;opacity:0;pointer-events:none;transition:.2s ease;z-index:10}
+.toast.show{opacity:1;bottom:26px}
+.toast.show{pointer-events:auto}
+.toast-undo{border:0;background:#fff;color:var(--accent-dark);border-radius:999px;font:inherit;font-weight:900;margin-left:8px;padding:4px 9px;cursor:pointer}
+.product-overlay{position:fixed;inset:0;background:rgba(32,34,79,.55);backdrop-filter:blur(8px);display:none;place-items:center;padding:18px;z-index:20}
+.product-overlay.open{display:grid}
+.product-page{width:min(1040px,100%);max-height:92vh;overflow:auto;padding:16px}
+.product-page-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:2px dashed var(--line);padding-bottom:12px;margin-bottom:14px}
+.product-page-grid{display:grid;grid-template-columns:minmax(240px,.86fr) minmax(0,1.14fr);gap:14px}
+.product-preview{min-height:260px;background:linear-gradient(135deg,#dff7ff,#fff2f8);border:2px solid var(--line);border-radius:18px;display:grid;place-items:center;overflow:hidden}
+.product-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.product-preview-empty{color:var(--muted);font-weight:900;text-align:center;padding:20px}
+.product-side{display:flex;flex-direction:column;gap:10px}
+.product-summary{display:grid;gap:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.product-fields{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.product-fields .field{grid-column:span 3}
+.product-fields .field.wide{grid-column:1/-1}
+.product-page-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;justify-content:flex-end}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .toolbar{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .span-2,.span-3,.span-4,.span-5,.span-6,.span-7{grid-column:span 6}
+}
+@media (max-width:620px){
+  .app{padding:18px 12px 72px}
+  h1{font-size:36px}
+  .topbar{grid-template-columns:1fr;padding:18px}
+  .quick,.toolbar,.drawer-grid,.cards{grid-template-columns:1fr}
+  .form-head{display:block}
+  .form-head .sub{margin-top:4px}
+  .optional-fields.open{grid-template-columns:1fr}
+  .span-2,.span-3,.span-4,.span-5,.span-6,.span-7,.span-12{grid-column:1/-1}
+  .search-links{grid-template-columns:1fr}
+  .product-page-grid,.product-fields{grid-template-columns:1fr}
+  .product-fields .field{grid-column:1/-1}
+  .mobile-add{display:inline-flex}
+  .actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Curated Picks</div>
+        <h1>My Wish List</h1>
+        <p class="sub">Save the exact listing, compare prices, and keep your favorites easy to scan.</p>
+      </div>
+    </div>
+    <div class="status" id="saveStatus">Loading...</div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-main">
+      <div class="stats" id="stats"></div>
+      <section class="panel toolbar">
+        <div class="field">
+          <label for="filterText">Find Saved Items</label>
+          <input id="filterText" placeholder="Search Your List">
+        </div>
+        <div class="field">
+          <label for="filterStatus">Status</label>
+          <select id="filterStatus">
+            <option value="all">All</option>
+            <option value="saved">Saved</option>
+            <option value="purchased">Purchased</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filterCategory">Category</label>
+          <select id="filterCategory"><option value="all">All</option></select>
+        </div>
+        <div class="field">
+          <label for="filterPriority">Priority</label>
+          <select id="filterPriority">
+            <option value="all">All</option>
+            <option>Love</option>
+            <option>High</option>
+            <option>Maybe</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="filterRecipient">For</label>
+          <select id="filterRecipient"><option value="all">All</option></select>
+        </div>
+      </section>
+    </div>
+
+    <form class="panel quick" id="quickForm">
+      <div class="form-head">
+        <div>
+          <h2>Quick Save</h2>
+          <p class="sub">Start with the essentials. Add image, target price, and notes only when you need them.</p>
+        </div>
+        <button class="btn soft small" id="toggleAddDetails" type="button">More Details</button>
+      </div>
+      <div class="field span-12 search-field">
+        <label for="productSearch">Product Search</label>
+        <input id="productSearch" placeholder="Pink headphones, platform sneakers, desk lamp...">
+      </div>
+      <div class="search-links span-12" id="searchLinks"></div>
+      <div class="field span-5">
+        <label for="title">Product Name</label>
+        <input id="title" required placeholder="Item Name">
+      </div>
+      <div class="field span-4">
+        <label for="link">Product Link</label>
+        <input id="link" inputmode="url" placeholder="https://...">
+      </div>
+      <div class="field span-3">
+        <label for="price">Price</label>
+        <input id="price" inputmode="decimal" placeholder="89.00">
+      </div>
+      <div class="optional-fields" id="addDetails">
+        <div class="field span-3">
+          <label for="targetPrice">Target</label>
+          <input id="targetPrice" inputmode="decimal" placeholder="65.00">
+        </div>
+        <div class="field span-3">
+          <label for="store">Store</label>
+          <input id="store" placeholder="Nordstrom, Etsy, Target...">
+        </div>
+        <div class="field span-3">
+          <label for="category">Category</label>
+          <select id="category">
+            <option>Fashion</option>
+            <option>Home</option>
+            <option>Beauty</option>
+            <option>Tech</option>
+            <option>Books</option>
+            <option>Travel</option>
+            <option>Kids</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field span-3">
+          <label for="priority">Priority</label>
+          <select id="priority">
+            <option>Love</option>
+            <option>High</option>
+            <option>Maybe</option>
+          </select>
+        </div>
+        <div class="field span-6">
+          <label for="image">Image Link</label>
+          <input id="image" inputmode="url" placeholder="https://...jpg or .png">
+        </div>
+        <div class="field span-6">
+          <label for="checkoutLink">Checkout Link</label>
+          <input id="checkoutLink" inputmode="url" placeholder="Paste checkout/cart link here">
+        </div>
+        <div class="field span-3">
+          <label for="recipient">For</label>
+          <input id="recipient" placeholder="Me, Emily, birthday...">
+        </div>
+        <div class="field span-3">
+          <label for="notes">Notes</label>
+          <textarea id="notes" placeholder="Size, color, why you like it, sale notes..."></textarea>
+        </div>
+      </div>
+      <button class="btn primary span-12" type="submit">Save To Wish List</button>
+    </form>
+  </section>
+
+  <div class="section-head">
+    <div>
+      <h2>Saved Finds</h2>
+      <p class="sub">Open, mark purchased, or tap an item name for the full product drawer.</p>
+    </div>
+    <button class="btn soft small" type="button" onclick="scrollToQuickSave()">Add Item</button>
+  </div>
+  <section id="cards" class="cards"></section>
+  <section id="emptyState" class="panel empty-state" hidden>
+    Your wish list is empty. Search for something cute, paste the link and picture, and save the first find.
+  </section>
+
+  <section class="drawer" id="toolsDrawer">
+    <h2>Backup And Sharing</h2>
+    <p class="sub">Export a backup, import one later, or copy a clean list into Notion.</p>
+    <div class="footer-actions">
+      <button class="btn sage" id="copyMarkdown" type="button">Copy Notion List</button>
+      <button class="btn ghost" id="exportJson" type="button">Export Backup</button>
+      <label class="btn ghost" for="importJson">Import Backup</label>
+      <input id="importJson" type="file" accept="application/json" hidden>
+      <button class="btn danger" id="clearPurchased" type="button">Clear Purchased</button>
+    </div>
+  </section>
+
+  <div class="footer-actions">
+      <button class="btn soft" id="toggleTools" type="button">Backup Tools</button>
+  </div>
+  <button class="btn primary mobile-add" type="button" onclick="scrollToQuickSave()">Add Item</button>
+</div>
+<div class="toast" id="toast">Saved</div>
+
+<div class="product-overlay" id="productOverlay" aria-hidden="true">
+  <section class="product-page" role="dialog" aria-modal="true" aria-labelledby="productPageTitle">
+    <div class="product-page-head">
+      <div>
+        <div class="eyebrow">Product Page</div>
+        <h2 id="productPageTitle">Edit Product</h2>
+      </div>
+      <button class="btn ghost" type="button" onclick="closeProductPage()">Close</button>
+    </div>
+    <div class="product-page-grid">
+      <div class="product-side">
+        <div class="product-preview" id="productPagePreview">
+          <div class="product-preview-empty">Image Preview</div>
+        </div>
+        <div class="product-summary" id="productPageSummary"></div>
+      </div>
+      <form id="productPageForm">
+        <input id="productPageId" type="hidden">
+        <div class="product-fields">
+          <div class="field wide">
+            <label for="pageTitle">Product Name</label>
+            <input id="pageTitle" required>
+          </div>
+          <div class="field">
+            <label for="pagePrice">Price</label>
+            <input id="pagePrice" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="pageStore">Store</label>
+            <input id="pageStore">
+          </div>
+          <div class="field">
+            <label for="pageCategory">Category</label>
+            <select id="pageCategory">
+              <option>Fashion</option>
+              <option>Home</option>
+              <option>Beauty</option>
+              <option>Tech</option>
+              <option>Books</option>
+              <option>Travel</option>
+              <option>Kids</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="pagePriority">Priority</label>
+            <select id="pagePriority">
+              <option>Love</option>
+              <option>High</option>
+              <option>Maybe</option>
+            </select>
+          </div>
+          <div class="field wide">
+            <label for="pageLink">Product Link</label>
+            <input id="pageLink" inputmode="url">
+          </div>
+          <div class="field wide">
+            <label for="pageImage">Image Link</label>
+            <input id="pageImage" inputmode="url">
+          </div>
+          <div class="field wide">
+            <label for="pageRecipient">For</label>
+            <input id="pageRecipient">
+          </div>
+          <div class="field wide">
+            <label for="pageNotes">Notes</label>
+            <textarea id="pageNotes"></textarea>
+          </div>
+        </div>
+        <div class="product-page-actions">
+          <a class="btn ghost" id="productPageOpen" target="_blank" rel="noopener">Open Listing</a>
+          <button class="btn primary" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script>
+const STORE_KEY = "curatedWishList.v1";
+const $ = id => document.getElementById(id);
+const money = new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"});
+const defaultState = {
+  items: [
+    {
+      id: crypto.randomUUID(),
+      title: "Example linen robe",
+      price: "78",
+      targetPrice: "60",
+      priceHistory: [
+        { date: "2026-07-01", price: 92 },
+        { date: "2026-07-08", price: 84 },
+        { date: "2026-07-15", price: 78 }
+      ],
+      link: "https://www.google.com/search?tbm=shop&q=linen+robe",
+      checkoutLink: "",
+      image: "",
+      store: "Shopping search",
+      category: "Home",
+      priority: "Love",
+      recipient: "Me",
+      notes: "Replace this sample with your first real find.",
+      status: "saved",
+      createdAt: Date.now()
+    }
+  ],
+  ui: { text:"", status:"all", category:"all", priority:"all", recipient:"all" }
+};
+let state = structuredClone(defaultState);
+let firebaseSync = { ready:false, docRef:null, setDoc:null, onSnapshot:null, serverTimestamp:null, lastRemoteAt:null };
+let saveTimer = null;
+let lastDeletedItem = null;
+let undoTimer = null;
+
+function attr(value){ return String(value || "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+function normalizePrice(value){ return Number(String(value || "").replace(/[^0-9.]/g,"")) || 0; }
+function priceNumber(value){
+  const n = Number(String(value || "").replace(/[^0-9.]/g,""));
+  return Number.isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : 0;
+}
+function todayStamp(){ return new Date().toISOString().slice(0,10); }
+function makeHistory(price, history){
+  const seen = Array.isArray(history) ? history : [];
+  const cleaned = seen
+    .map(row => ({ date: String(row.date || todayStamp()).slice(0,10), price: priceNumber(row.price) }))
+    .filter(row => row.price > 0)
+    .slice(-12);
+  const current = priceNumber(price);
+  if(current && (!cleaned.length || cleaned[cleaned.length - 1].price !== current)){
+    cleaned.push({ date: todayStamp(), price: current });
+  }
+  return cleaned.slice(-12);
+}
+function priceStats(item){
+  const history = makeHistory(item.price, item.priceHistory);
+  const prices = history.map(row => row.price).filter(Boolean);
+  const current = priceNumber(item.price);
+  const target = priceNumber(item.targetPrice);
+  const low = prices.length ? Math.min(...prices) : current;
+  const high = prices.length ? Math.max(...prices) : current;
+  const previous = prices.length > 1 ? prices[prices.length - 2] : 0;
+  const delta = current && previous ? current - previous : 0;
+  const atTarget = current && target && current <= target;
+  return { history, current, target, low, high, previous, delta, atTarget };
+}
+function normalizeUrl(value){
+  const url = String(value || "").trim();
+  if(!url) return "";
+  if(/^https?:\/\//i.test(url)) return url;
+  if(/^[\w-]+(\.[\w-]+)+/.test(url)) return `https://${url}`;
+  return url;
+}
+function normalizeState(next){
+  const base = structuredClone(defaultState);
+  if(!next || typeof next !== "object") return base;
+  const items = Array.isArray(next.items) ? next.items : base.items;
+  return {
+    ...base,
+    ...next,
+    items: items.map(item => ({
+      id: item.id || crypto.randomUUID(),
+      title: item.title || "Untitled find",
+      price: item.price || "",
+      targetPrice: item.targetPrice || "",
+      priceHistory: makeHistory(item.price, item.priceHistory),
+      link: normalizeUrl(item.link),
+      checkoutLink: normalizeUrl(item.checkoutLink),
+      image: item.image || "",
+      searchQuery: item.searchQuery || item.title || "",
+      store: item.store || "",
+      category: item.category || "Other",
+      priority: item.priority || "Maybe",
+      recipient: item.recipient || "",
+      notes: item.notes || "",
+      status: item.status || "saved",
+      createdAt: item.createdAt || Date.now()
+    })),
+    ui: { ...base.ui, ...(next.ui || {}) }
+  };
+}
+function showToast(message){
+  $("toast").textContent = message;
+  $("toast").classList.add("show");
+  setTimeout(() => $("toast").classList.remove("show"), 1700);
+}
+function showUndoToast(message){
+  $("toast").innerHTML = `${attr(message)} <button class="toast-undo" type="button" onclick="undoDelete()">Undo</button>`;
+  $("toast").classList.add("show");
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(() => {
+    lastDeletedItem = null;
+    $("toast").classList.remove("show");
+    $("toast").textContent = "Saved";
+  }, 4500);
+}
+function updateSaveUI(message){
+  $("saveStatus").textContent = message || (firebaseSync.ready ? "Synced With Firebase" : "Saved On This Device");
+}
+async function loadLocal(){
+  try{
+    if(window.storage){
+      const stored = await window.storage.get(STORE_KEY);
+      if(stored) return normalizeState(JSON.parse(stored));
+    }
+  }catch(e){}
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return normalizeState(JSON.parse(raw));
+  }catch(e){}
+  return normalizeState(defaultState);
+}
+async function saveLocal(){
+  const payload = JSON.stringify(state);
+  try{
+    if(window.storage){
+      await window.storage.set(STORE_KEY, payload);
+      return;
+    }
+  }catch(e){}
+  try{ localStorage.setItem(STORE_KEY, payload); }catch(e){}
+}
+function markDirty(message){
+  saveLocal();
+  updateSaveUI(message || "Saving...");
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveRemote, 450);
+}
+async function saveRemote(){
+  if(!firebaseSync.ready){
+    updateSaveUI("Saved On This Device");
+    return;
+  }
+  try{
+    await firebaseSync.setDoc(firebaseSync.docRef, {
+      state,
+      updatedAt: firebaseSync.serverTimestamp(),
+      clientUpdatedAt: Date.now()
+    });
+    updateSaveUI("Synced With Firebase");
+  }catch(e){
+    updateSaveUI("Saved Here; Sync Failed");
+  }
+}
+function hasFirebaseConfig(){
+  const cfg = window.WISHLIST_FIREBASE_CONFIG || {};
+  return cfg.apiKey && !String(cfg.apiKey).startsWith("PASTE_");
+}
+async function initFirebase(){
+  if(!hasFirebaseConfig()){
+    updateSaveUI("Saved On This Device");
+    return;
+  }
+  try{
+    updateSaveUI("Connecting To Firebase...");
+    const appMod = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+    const authMod = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js");
+    const fireMod = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
+    const app = appMod.initializeApp(window.WISHLIST_FIREBASE_CONFIG);
+    await authMod.signInAnonymously(authMod.getAuth(app));
+    const db = fireMod.getFirestore(app);
+    const path = (window.WISHLIST_FIREBASE_DOC_PATH || "shopping/curated-wish-list").split("/");
+    firebaseSync = {
+      ready:true,
+      docRef: fireMod.doc(db, ...path),
+      setDoc: fireMod.setDoc,
+      onSnapshot: fireMod.onSnapshot,
+      serverTimestamp: fireMod.serverTimestamp,
+      lastRemoteAt:null
+    };
+    const snap = await fireMod.getDoc(firebaseSync.docRef);
+    if(snap.exists() && snap.data().state){
+      state = normalizeState(snap.data().state);
+      await saveLocal();
+      render();
+    }else{
+      await saveRemote();
+    }
+    firebaseSync.onSnapshot(firebaseSync.docRef, snap => {
+      if(!snap.exists()) return;
+      const data = snap.data();
+      if(!data.clientUpdatedAt || data.clientUpdatedAt === firebaseSync.lastRemoteAt) return;
+      firebaseSync.lastRemoteAt = data.clientUpdatedAt;
+      if(data.state){
+        state = normalizeState(data.state);
+        saveLocal();
+        render();
+        updateSaveUI("Synced With Firebase");
+      }
+    });
+  }catch(e){
+    updateSaveUI("Saved On This Device");
+  }
+}
+
+function searchUrl(site, q){
+  const encoded = encodeURIComponent(q || $("productSearch").value || "");
+  const urls = {
+    "Google": `https://www.google.com/search?tbm=shop&q=${encoded}`,
+    "Amazon": `https://www.amazon.com/s?k=${encoded}`,
+    "Etsy": `https://www.etsy.com/search?q=${encoded}`,
+  };
+  return urls[site];
+}
+function renderSearchLinks(){
+  const sites = ["Google","Amazon","Etsy"];
+  $("searchLinks").innerHTML = sites.map(site => `<a class="btn small ghost" href="${searchUrl(site)}" target="_blank" rel="noopener">${site}</a>`).join("");
+}
+function updateSelectOptions(){
+  const categories = [...new Set(["Fashion","Home","Beauty","Tech","Books","Travel","Kids","Other", ...state.items.map(i => i.category).filter(Boolean)])];
+  $("filterCategory").innerHTML = `<option value="all">All</option>` + categories.map(c => `<option ${state.ui.category === c ? "selected" : ""}>${attr(c)}</option>`).join("");
+  const recipients = [...new Set(state.items.map(i => i.recipient).filter(Boolean))].sort();
+  $("filterRecipient").innerHTML = `<option value="all">All</option>` + recipients.map(r => `<option ${state.ui.recipient === r ? "selected" : ""}>${attr(r)}</option>`).join("");
+}
+function filteredItems(){
+  const text = (state.ui.text || "").toLowerCase();
+  return state.items
+    .filter(item => state.ui.status === "all" || item.status === state.ui.status)
+    .filter(item => state.ui.category === "all" || item.category === state.ui.category)
+    .filter(item => state.ui.priority === "all" || item.priority === state.ui.priority)
+    .filter(item => state.ui.recipient === "all" || item.recipient === state.ui.recipient)
+    .filter(item => !text || [item.title,item.store,item.category,item.priority,item.recipient,item.notes].join(" ").toLowerCase().includes(text))
+    .sort((a,b) => (a.status === "purchased") - (b.status === "purchased") || (b.createdAt || 0) - (a.createdAt || 0));
+}
+function renderStats(){
+  const saved = state.items.filter(i => i.status !== "purchased");
+  const purchased = state.items.filter(i => i.status === "purchased");
+  const total = saved.reduce((sum,item) => sum + normalizePrice(item.price), 0);
+  const targetHits = saved.filter(item => priceStats(item).atTarget).length;
+  $("stats").innerHTML = `
+    <div class="stat"><div class="num">${saved.length}</div><div class="lbl">Saved</div></div>
+    <div class="stat"><div class="num">${money.format(total)}</div><div class="lbl">Estimated</div></div>
+    <div class="stat price-watch"><div class="num">${targetHits}</div><div class="lbl">At Target</div></div>
+    <div class="stat"><div class="num">${purchased.length}</div><div class="lbl">Purchased</div></div>
+  `;
+}
+function renderSparkline(history){
+  const prices = history.map(row => row.price).filter(Boolean);
+  if(!prices.length) return `<div class="spark-note">Add a price to start history.</div>`;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  const span = Math.max(max - min, 1);
+  const bars = prices.map(price => {
+    const height = 18 + Math.round(((price - min) / span) * 24);
+    return `<span class="spark-bar" title="${money.format(price)}" style="height:${height}px"></span>`;
+  }).join("");
+  const first = history[0]?.date || "";
+  const last = history[history.length - 1]?.date || "";
+  return `<div class="sparkline" aria-label="Price history">${bars}</div><div class="spark-note">${attr(first)} to ${attr(last)}</div>`;
+}
+function renderCards(){
+  const items = filteredItems();
+  $("emptyState").hidden = items.length > 0;
+  $("cards").innerHTML = items.map(item => {
+    const idArg = attr(JSON.stringify(item.id));
+    const stats = priceStats(item);
+    const price = stats.current ? money.format(stats.current) : "Price TBD";
+    const target = stats.target ? money.format(stats.target) : "No target";
+    const low = stats.low ? money.format(stats.low) : "--";
+    const high = stats.high ? money.format(stats.high) : "--";
+    const deltaClass = stats.delta < 0 ? "good" : stats.delta > 0 ? "warn" : "";
+    const deltaText = stats.delta ? `${stats.delta < 0 ? "Down" : "Up"} ${money.format(Math.abs(stats.delta))}` : "No change";
+    const img = item.image ? `<img src="${attr(item.image)}" alt="${attr(item.title)}" onerror="this.parentElement.innerHTML='<div class=&quot;empty&quot;>Image unavailable</div>'">` : `<div class="empty">Paste an image link to show this item here</div>`;
+    const statusText = item.status === "purchased" ? "Purchased" : "Saved";
+    const openHref = item.link || searchUrl("Google", item.searchQuery || item.title);
+    const checkoutHref = item.checkoutLink || "";
+    const checkoutAction = checkoutHref
+      ? `<a class="btn small sage" href="${attr(checkoutHref)}" target="_blank" rel="noopener">Checkout</a>`
+      : `<button class="btn small sage" type="button" onclick="openProductPage(${idArg})">Add Checkout</button>`;
+    const targetClass = stats.atTarget ? "gold" : "status-pill";
+    return `
+      <article class="card${item.status === "purchased" ? " purchased" : ""}">
+        <div class="photo">${img}</div>
+        <div class="body">
+          <div class="meta">
+            <span class="pill">${attr(item.priority || "Maybe")}</span>
+            <span class="pill sage">${attr(item.category || "Other")}</span>
+            <span class="pill status-pill">${attr(statusText)}</span>
+            ${stats.atTarget ? `<span class="pill ${targetClass}">At Target</span>` : ""}
+            ${item.recipient ? `<span class="pill pink">For ${attr(item.recipient)}</span>` : ""}
+          </div>
+          <div class="title"><button class="title-button" type="button" onclick="openProductPage(${idArg})" title="Edit ${attr(item.title)}">${attr(item.title)}</button></div>
+          <div class="details">${item.store ? `${attr(item.store)}` : "Store not listed"}</div>
+          <div class="price-panel">
+            <div class="price-line">
+              <div>
+                <div class="price-current">${attr(price)}</div>
+                <div class="price-delta ${deltaClass}">${attr(deltaText)}</div>
+              </div>
+              <div class="price-target">Target<br>${attr(target)}</div>
+            </div>
+            <div class="price-watch-row">
+              <div class="price-mini"><span class="k">Low</span><span class="v">${attr(low)}</span></div>
+              <div class="price-mini"><span class="k">High</span><span class="v">${attr(high)}</span></div>
+              <div class="price-mini"><span class="k">Logs</span><span class="v">${stats.history.length}</span></div>
+            </div>
+            ${renderSparkline(stats.history)}
+          </div>
+          ${item.notes ? `<div class="notes">${attr(item.notes)}</div>` : ""}
+          <div class="actions">
+            <a class="btn small primary" href="${attr(openHref)}" target="_blank" rel="noopener">Open Listing</a>
+            ${checkoutAction}
+            <button class="btn small ghost" type="button" onclick="openProductPage(${idArg})">Details</button>
+            <button class="btn small ghost" type="button" onclick="togglePurchased(${idArg})">${item.status === "purchased" ? "Move Back" : "Mark Bought"}</button>
+            <button class="btn small danger" type="button" onclick="deleteItem(${idArg})">Delete</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+function render(){
+  renderSearchLinks();
+  updateSelectOptions();
+  $("filterText").value = state.ui.text || "";
+  $("filterStatus").value = state.ui.status || "all";
+  $("filterPriority").value = state.ui.priority || "all";
+  renderStats();
+  renderCards();
+}
+function formValue(id){ return $(id).value.trim(); }
+function clearForm(){
+  ["title","price","targetPrice","link","checkoutLink","image","store","recipient","notes"].forEach(id => $(id).value = "");
+  $("category").value = "Fashion";
+  $("priority").value = "Love";
+  $("productSearch").value = "";
+  $("addDetails").classList.remove("open");
+  $("toggleAddDetails").textContent = "More Details";
+  $("title").focus();
+}
+function saveFromForm(event){
+  event.preventDefault();
+  const existingId = $("quickForm").dataset.editing;
+  const payload = {
+    title: formValue("title"),
+    price: formValue("price"),
+    targetPrice: formValue("targetPrice"),
+    link: normalizeUrl(formValue("link")),
+    checkoutLink: normalizeUrl(formValue("checkoutLink")),
+    image: normalizeUrl(formValue("image")),
+    store: formValue("store"),
+    category: formValue("category"),
+    priority: formValue("priority"),
+    recipient: formValue("recipient"),
+    notes: formValue("notes"),
+    searchQuery: formValue("productSearch") || formValue("title")
+  };
+  if(existingId){
+    const item = state.items.find(i => i.id === existingId);
+    if(item) {
+      const priorHistory = item.priceHistory || [];
+      Object.assign(item, payload);
+      item.priceHistory = makeHistory(item.price, priorHistory);
+    }
+    $("quickForm").dataset.editing = "";
+    $("quickForm").querySelector("button[type=submit]").textContent = "Save To Wish List";
+    showToast("Updated");
+  }else{
+    state.items.unshift({ id: crypto.randomUUID(), status:"saved", createdAt:Date.now(), ...payload, priceHistory: makeHistory(payload.price, []) });
+    showToast("Saved");
+  }
+  state.ui = { text:"", status:"all", category:"all", priority:"all", recipient:"all" };
+  clearForm();
+  markDirty("Saved");
+  render();
+}
+function editItem(id){
+  openProductPage(id);
+}
+function setProductPreview(src){
+  const preview = $("productPagePreview");
+  const url = normalizeUrl(src);
+  preview.innerHTML = url
+    ? `<img src="${attr(url)}" alt="Product preview" onerror="this.parentElement.innerHTML='<div class=&quot;product-preview-empty&quot;>Image Unavailable</div>'">`
+    : `<div class="product-preview-empty">Image Preview</div>`;
+}
+function renderProductSummary(item){
+  const stats = priceStats(item);
+  const price = stats.current ? money.format(stats.current) : "Price TBD";
+  const low = stats.low ? money.format(stats.low) : "--";
+  const deltaClass = stats.delta < 0 ? "good" : stats.delta > 0 ? "warn" : "";
+  const deltaText = stats.delta ? `${stats.delta < 0 ? "Down" : "Up"} ${money.format(Math.abs(stats.delta))}` : "No price change yet";
+  $("productPageSummary").innerHTML = `
+    <div class="meta">
+      <span class="pill">${attr(item.priority || "Maybe")}</span>
+      <span class="pill sage">${attr(item.category || "Other")}</span>
+      <span class="pill status-pill">${attr(item.status === "purchased" ? "Purchased" : "Saved")}</span>
+    </div>
+    <div class="price-line">
+      <div>
+        <div class="price-current">${attr(price)}</div>
+        <div class="price-delta ${deltaClass}">${attr(deltaText)}</div>
+      </div>
+    </div>
+    <div class="price-watch-row">
+      <div class="price-mini"><span class="k">Lowest</span><span class="v">${attr(low)}</span></div>
+      <div class="price-mini"><span class="k">Store</span><span class="v">${attr(item.store || "None")}</span></div>
+      <div class="price-mini"><span class="k">For</span><span class="v">${attr(item.recipient || "Me")}</span></div>
+    </div>
+    ${renderSparkline(stats.history)}
+  `;
+}
+function openProductPage(id){
+  const item = state.items.find(i => i.id === id);
+  if(!item) return;
+  $("productPageId").value = item.id;
+  $("productPageTitle").textContent = item.title || "Edit Product";
+  $("pageTitle").value = item.title || "";
+  $("pagePrice").value = item.price || "";
+  $("pageStore").value = item.store || "";
+  $("pageCategory").value = item.category || "Other";
+  $("pagePriority").value = item.priority || "Maybe";
+  $("pageLink").value = item.link || "";
+  $("pageImage").value = item.image || "";
+  $("pageRecipient").value = item.recipient || "";
+  $("pageNotes").value = item.notes || "";
+  const openHref = item.link || searchUrl("Google", item.searchQuery || item.title);
+  $("productPageOpen").href = openHref;
+  setProductPreview(item.image);
+  renderProductSummary(item);
+  $("productOverlay").classList.add("open");
+  $("productOverlay").setAttribute("aria-hidden","false");
+  $("pageTitle").focus();
+}
+function closeProductPage(){
+  $("productOverlay").classList.remove("open");
+  $("productOverlay").setAttribute("aria-hidden","true");
+}
+function saveProductPage(event){
+  event.preventDefault();
+  const id = $("productPageId").value;
+  const item = state.items.find(i => i.id === id);
+  if(!item) return;
+  Object.assign(item, {
+    title: formValue("pageTitle"),
+    price: formValue("pagePrice"),
+    store: formValue("pageStore"),
+    category: formValue("pageCategory"),
+    priority: formValue("pagePriority"),
+    link: normalizeUrl(formValue("pageLink")),
+    image: normalizeUrl(formValue("pageImage")),
+    recipient: formValue("pageRecipient"),
+    notes: formValue("pageNotes"),
+    searchQuery: item.searchQuery || formValue("pageTitle")
+  });
+  item.priceHistory = makeHistory(item.price, item.priceHistory);
+  markDirty("Saved");
+  render();
+  closeProductPage();
+  showToast("Updated");
+}
+function togglePurchased(id){
+  const item = state.items.find(i => i.id === id);
+  if(!item) return;
+  item.status = item.status === "purchased" ? "saved" : "purchased";
+  markDirty("Saved");
+  render();
+}
+function scrollToQuickSave(){
+  $("quickForm").scrollIntoView({ behavior:"smooth", block:"start" });
+  setTimeout(() => $("title").focus(), 280);
+}
+function deleteItem(id){
+  const item = state.items.find(i => i.id === id);
+  if(!item) return;
+  lastDeletedItem = { ...item };
+  state.items = state.items.filter(i => i.id !== id);
+  markDirty("Saved");
+  render();
+  showUndoToast("Deleted");
+}
+function undoDelete(){
+  if(!lastDeletedItem) return;
+  state.items.unshift(lastDeletedItem);
+  lastDeletedItem = null;
+  clearTimeout(undoTimer);
+  markDirty("Saved");
+  render();
+  showToast("Restored");
+}
+function copyMarkdown(){
+  const lines = state.items.map(item => {
+    const box = item.status === "purchased" ? "x" : " ";
+    const price = normalizePrice(item.price) ? ` - ${money.format(normalizePrice(item.price))}` : "";
+    const link = item.link ? ` ([link](${item.link}))` : "";
+    return `- [${box}] ${item.title}${price}${link} - ${item.category || "Other"} - ${item.priority || "Maybe"}`;
+  }).join("\n");
+  navigator.clipboard.writeText(lines || "No wish list items yet.");
+  showToast("Copied for Notion");
+}
+function exportJson(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "curated-wish-list-backup.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importJson(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const next = JSON.parse(reader.result);
+      if(!Array.isArray(next.items)) throw new Error("Missing items");
+      state = { ...structuredClone(defaultState), ...next, ui: { ...defaultState.ui, ...(next.ui || {}) } };
+      markDirty("Imported");
+      render();
+      showToast("Backup imported");
+    }catch(e){
+      alert("That backup file could not be imported.");
+    }
+  };
+  reader.readAsText(file);
+}
+function bindEvents(){
+  $("quickForm").addEventListener("submit", saveFromForm);
+  $("toggleAddDetails").addEventListener("click", () => {
+    const details = $("addDetails");
+    details.classList.toggle("open");
+    $("toggleAddDetails").textContent = details.classList.contains("open") ? "Less Details" : "More Details";
+  });
+  $("productSearch").addEventListener("input", renderSearchLinks);
+  $("productSearch").addEventListener("change", () => {
+    if(!$("title").value.trim()) $("title").value = $("productSearch").value.trim();
+  });
+  ["filterText","filterStatus","filterCategory","filterPriority","filterRecipient"].forEach(id => {
+    $(id).addEventListener("input", () => {
+      const key = id.replace("filter","").toLowerCase();
+      state.ui[key === "text" ? "text" : key] = $(id).value;
+      markDirty("Filters saved");
+      render();
+    });
+  });
+  $("toggleTools").addEventListener("click", () => $("toolsDrawer").classList.toggle("open"));
+  $("copyMarkdown").addEventListener("click", copyMarkdown);
+  $("exportJson").addEventListener("click", exportJson);
+  $("importJson").addEventListener("change", e => e.target.files[0] && importJson(e.target.files[0]));
+  $("clearPurchased").addEventListener("click", () => {
+    if(!confirm("Remove all purchased items?")) return;
+    state.items = state.items.filter(i => i.status !== "purchased");
+    markDirty("Saved");
+    render();
+  });
+  $("productPageForm").addEventListener("submit", saveProductPage);
+  $("pageImage").addEventListener("input", () => setProductPreview($("pageImage").value));
+  $("pageLink").addEventListener("input", () => {
+    const href = normalizeUrl($("pageLink").value) || searchUrl("Google", $("pageTitle").value);
+    $("productPageOpen").href = href;
+  });
+  $("productOverlay").addEventListener("click", event => {
+    if(event.target === $("productOverlay")) closeProductPage();
+  });
+  document.addEventListener("keydown", event => {
+    if(event.key === "Escape" && $("productOverlay").classList.contains("open")) closeProductPage();
+  });
+}
+(async function init(){
+  try{
+    bindEvents();
+    state = await loadLocal();
+    render();
+    await initFirebase();
+  }catch(error){
+    console.error(error);
+    localStorage.removeItem(STORE_KEY);
+    state = normalizeState(defaultState);
+    render();
+    updateSaveUI("Recovered local data");
+  }
+})();
+</script>
+</body>
+</html>
