@@ -1,0 +1,15 @@
+{
+  "name": "curated-wish-list",
+  "version": "1.0.0",
+  "description": "A single-page curated wish list app.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}
