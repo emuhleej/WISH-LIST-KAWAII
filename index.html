@@ -142,6 +142,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
 .card{overflow:hidden;display:flex;flex-direction:column;min-height:100%;transition:transform .16s ease,box-shadow .16s ease}
 .card:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(49,40,61,.14)}
+.card.purchased{filter:grayscale(.9);opacity:.6}
+.card.purchased:hover{filter:grayscale(.7);opacity:.8}
 .photo{aspect-ratio:1.06;background:linear-gradient(135deg,#eef9fb,#fff4f8);border-bottom:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
 .photo img{width:100%;height:100%;object-fit:cover;display:block}
 .photo .empty{color:var(--muted);font-size:13px;font-weight:800;text-align:center;padding:20px}
@@ -407,10 +409,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
             <input id="pagePrice" inputmode="decimal">
           </div>
           <div class="field">
-            <label for="pageTargetPrice">Target</label>
-            <input id="pageTargetPrice" inputmode="decimal">
-          </div>
-          <div class="field">
             <label for="pageStore">Store</label>
             <input id="pageStore">
           </div>
@@ -440,10 +438,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
             <input id="pageLink" inputmode="url">
           </div>
           <div class="field wide">
-            <label for="pageCheckoutLink">Checkout Link</label>
-            <input id="pageCheckoutLink" inputmode="url">
-          </div>
-          <div class="field wide">
             <label for="pageImage">Image Link</label>
             <input id="pageImage" inputmode="url">
           </div>
@@ -458,7 +452,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
         </div>
         <div class="product-page-actions">
           <a class="btn ghost" id="productPageOpen" target="_blank" rel="noopener">Open Listing</a>
-          <a class="btn sage" id="productPageCheckout" target="_blank" rel="noopener">Checkout</a>
           <button class="btn primary" type="submit">Save Changes</button>
         </div>
       </form>
@@ -758,7 +751,7 @@ function renderCards(){
       : `<button class="btn small sage" type="button" onclick="openProductPage(${idArg})">Add Checkout</button>`;
     const targetClass = stats.atTarget ? "gold" : "status-pill";
     return `
-      <article class="card">
+      <article class="card${item.status === "purchased" ? " purchased" : ""}">
         <div class="photo">${img}</div>
         <div class="body">
           <div class="meta">
@@ -866,7 +859,6 @@ function setProductPreview(src){
 function renderProductSummary(item){
   const stats = priceStats(item);
   const price = stats.current ? money.format(stats.current) : "Price TBD";
-  const target = stats.target ? money.format(stats.target) : "No target set";
   const low = stats.low ? money.format(stats.low) : "--";
   const deltaClass = stats.delta < 0 ? "good" : stats.delta > 0 ? "warn" : "";
   const deltaText = stats.delta ? `${stats.delta < 0 ? "Down" : "Up"} ${money.format(Math.abs(stats.delta))}` : "No price change yet";
@@ -875,14 +867,12 @@ function renderProductSummary(item){
       <span class="pill">${attr(item.priority || "Maybe")}</span>
       <span class="pill sage">${attr(item.category || "Other")}</span>
       <span class="pill status-pill">${attr(item.status === "purchased" ? "Purchased" : "Saved")}</span>
-      ${stats.atTarget ? `<span class="pill gold">At Target</span>` : ""}
     </div>
     <div class="price-line">
       <div>
         <div class="price-current">${attr(price)}</div>
         <div class="price-delta ${deltaClass}">${attr(deltaText)}</div>
       </div>
-      <div class="price-target">Target<br>${attr(target)}</div>
     </div>
     <div class="price-watch-row">
       <div class="price-mini"><span class="k">Lowest</span><span class="v">${attr(low)}</span></div>
@@ -899,20 +889,15 @@ function openProductPage(id){
   $("productPageTitle").textContent = item.title || "Edit Product";
   $("pageTitle").value = item.title || "";
   $("pagePrice").value = item.price || "";
-  $("pageTargetPrice").value = item.targetPrice || "";
   $("pageStore").value = item.store || "";
   $("pageCategory").value = item.category || "Other";
   $("pagePriority").value = item.priority || "Maybe";
   $("pageLink").value = item.link || "";
-  $("pageCheckoutLink").value = item.checkoutLink || "";
   $("pageImage").value = item.image || "";
   $("pageRecipient").value = item.recipient || "";
   $("pageNotes").value = item.notes || "";
   const openHref = item.link || searchUrl("Google", item.searchQuery || item.title);
   $("productPageOpen").href = openHref;
-  $("productPageCheckout").href = item.checkoutLink || "#";
-  $("productPageCheckout").classList.toggle("disabled", !item.checkoutLink);
-  $("productPageCheckout").textContent = item.checkoutLink ? "Checkout" : "Add Checkout Link";
   setProductPreview(item.image);
   renderProductSummary(item);
   $("productOverlay").classList.add("open");
@@ -931,12 +916,10 @@ function saveProductPage(event){
   Object.assign(item, {
     title: formValue("pageTitle"),
     price: formValue("pagePrice"),
-    targetPrice: formValue("pageTargetPrice"),
     store: formValue("pageStore"),
     category: formValue("pageCategory"),
     priority: formValue("pagePriority"),
     link: normalizeUrl(formValue("pageLink")),
-    checkoutLink: normalizeUrl(formValue("pageCheckoutLink")),
     image: normalizeUrl(formValue("pageImage")),
     recipient: formValue("pageRecipient"),
     notes: formValue("pageNotes"),
@@ -1045,12 +1028,6 @@ function bindEvents(){
   $("pageLink").addEventListener("input", () => {
     const href = normalizeUrl($("pageLink").value) || searchUrl("Google", $("pageTitle").value);
     $("productPageOpen").href = href;
-  });
-  $("pageCheckoutLink").addEventListener("input", () => {
-    const href = normalizeUrl($("pageCheckoutLink").value);
-    $("productPageCheckout").href = href || "#";
-    $("productPageCheckout").classList.toggle("disabled", !href);
-    $("productPageCheckout").textContent = href ? "Checkout" : "Add Checkout Link";
   });
   $("productOverlay").addEventListener("click", event => {
     if(event.target === $("productOverlay")) closeProductPage();
