@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Curated Wish List</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ca5d8f">
+<link rel="apple-touch-icon" href="icons/app-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wish List">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Titan+One&display=swap" rel="stylesheet">
@@ -60,7 +66,8 @@ h2{font-size:22px;letter-spacing:.01em;font-weight:900}
 h3{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 .app{max-width:1160px;margin:0 auto;padding:22px 16px 96px}
 .topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;margin-bottom:14px;background:linear-gradient(135deg,#31283d 0,#6d6084 48%,#ca5d8f 100%);border-radius:18px;box-shadow:var(--shadow);padding:24px;overflow:hidden}
-.brand{display:flex;align-items:center;gap:11px}
+.brand{display:flex;align-items:center;gap:16px}
+.brand .mascot{width:74px;height:74px;flex:none;filter:drop-shadow(0 4px 10px rgba(49,40,61,.35))}
 .eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#f8d9e7}
 .status{border:1px solid rgba(255,255,255,.44);background:rgba(255,255,255,.9);border-radius:999px;padding:7px 11px;color:var(--accent-dark);font-size:13px;font-weight:850;white-space:nowrap}
 .sub{color:var(--muted);max-width:70ch;margin-top:8px}
@@ -169,6 +176,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 .price-delta.warn{color:#ad4d62}
 .notes{font-size:14px;color:var(--ink);white-space:pre-wrap;background:#fff;border:1px dashed var(--line);border-radius:7px;padding:8px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}
+.actions .primary{grid-column:1/-1}
 .actions .danger{grid-column:1/-1}
 .empty-state{padding:26px;text-align:center;color:var(--muted)}
 .drawer{padding:16px;margin-top:16px;display:none}
@@ -203,6 +211,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 @media (max-width:620px){
   .app{padding:18px 12px 72px}
   h1{font-size:36px}
+  .brand .mascot{width:56px;height:56px}
   .topbar{grid-template-columns:1fr;padding:18px}
   .quick,.toolbar,.drawer-grid,.cards,.stats{grid-template-columns:1fr}
   .form-head{display:block}
@@ -221,6 +230,41 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 <div class="app">
   <div class="topbar">
     <div class="brand">
+      <svg class="mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cute gift box mascot">
+        <defs>
+          <linearGradient id="mBox" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#f79ac6"/>
+            <stop offset="1" stop-color="#ca5d8f"/>
+          </linearGradient>
+          <linearGradient id="mLid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#a99be8"/>
+            <stop offset="1" stop-color="#8b7bd8"/>
+          </linearGradient>
+        </defs>
+        <g fill="#ffe08a">
+          <path d="M17 27 l2.2 5 5 2.2 -5 2.2 -2.2 5 -2.2 -5 -5 -2.2 5 -2.2z"/>
+          <path d="M85 33 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6z"/>
+        </g>
+        <path d="M81 61 l1.5 3.4 3.4 1.5 -3.4 1.5 -1.5 3.4 -1.5 -3.4 -3.4 -1.5 3.4 -1.5z" fill="#ffffff" opacity="0.92"/>
+        <rect x="27" y="47" width="46" height="39" rx="8" fill="url(#mBox)"/>
+        <rect x="45" y="47" width="10" height="39" fill="#bde8f1"/>
+        <rect x="22" y="37" width="56" height="14" rx="6" fill="url(#mLid)"/>
+        <rect x="45" y="37" width="10" height="14" fill="#bde8f1"/>
+        <g fill="#8b7bd8">
+          <ellipse cx="43" cy="31" rx="8" ry="6"/>
+          <ellipse cx="57" cy="31" rx="8" ry="6"/>
+        </g>
+        <circle cx="50" cy="32" r="4.2" fill="#a99be8"/>
+        <g fill="#ff8fbf" opacity="0.75">
+          <circle cx="37" cy="70" r="3.4"/>
+          <circle cx="63" cy="70" r="3.4"/>
+        </g>
+        <g fill="none" stroke="#4a3b5c" stroke-width="2.4" stroke-linecap="round">
+          <path d="M39 65 q3 -4 6 0"/>
+          <path d="M55 65 q3 -4 6 0"/>
+          <path d="M47 69 q3 3 6 0"/>
+        </g>
+      </svg>
       <div>
         <div class="eyebrow">Curated Picks</div>
         <h1>My Wish List</h1>
