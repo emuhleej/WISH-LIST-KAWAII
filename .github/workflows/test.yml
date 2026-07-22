@@ -60,6 +60,11 @@ jobs:
     name: Firestore rules (emulator)
     runs-on: ubuntu-latest
     steps:
+      - name: Install system dependencies for Java
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgconf-2-4
+
       - name: Checkout
         uses: actions/checkout@v4
 
