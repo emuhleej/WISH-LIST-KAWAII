@@ -83,7 +83,10 @@ jobs:
         run: java -version
 
       - name: Run Firestore rules tests
-        run: npm run test:rules
+        run: |
+          pwd
+          ls -la firestore.rules
+          npm run test:rules
         env:
           DEBUG: firebase-tools:*
 
