@@ -9,7 +9,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "e2e": "playwright test",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-wishlist \"vitest run --config vitest.rules.config.js\""
+    "test:rules": "npx firebase emulators:exec --only firestore --project demo-wishlist 'npx vitest run --config vitest.rules.config.js'"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.1",
