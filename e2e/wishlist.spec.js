@@ -84,6 +84,24 @@ test("the At Target stat tile is removed from the summary bar", async ({ page })
   await expect(page.locator("#stats")).not.toContainText("At Target");
 });
 
+test("a lone card keeps a sane thumbnail width instead of stretching full-width", async ({ page }) => {
+  // With only the sample item present, the auto-fit/auto-fill grid must not
+  // let a single card's photo balloon out to the full container width.
+  await expect(page.locator(".card")).toHaveCount(1);
+  const box = await page.locator(".card").boundingBox();
+  expect(box.width).toBeLessThan(500);
+});
+
+test("the product-page summary's Store/For row has no leftover empty cell", async ({ page }) => {
+  await page.locator(".card .title-button").first().click();
+  await expect(page.locator("#productOverlay")).toHaveClass(/open/);
+
+  const row = page.locator("#productPageSummary .price-watch-row");
+  await expect(row.locator(".price-mini")).toHaveCount(2);
+  await expect(row.getByText("Store")).toBeVisible();
+  await expect(row.getByText("For")).toBeVisible();
+});
+
 test("editing an item from the product page persists changes", async ({ page }) => {
   await page.locator(".card .title-button").first().click();
   await page.fill("#pageTitle", "Renamed robe");
