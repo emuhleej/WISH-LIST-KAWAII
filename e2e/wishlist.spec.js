@@ -55,6 +55,35 @@ test("product page no longer offers checkout link or target fields", async ({ pa
   await expect(actions.getByText("Checkout", { exact: true })).toHaveCount(0);
 });
 
+test("Quick Save form no longer has target price or checkout link inputs", async ({ page }) => {
+  // Reveal the optional fields where these inputs used to live.
+  await page.click("#toggleAddDetails");
+  await expect(page.locator("#targetPrice")).toHaveCount(0);
+  await expect(page.locator("#checkoutLink")).toHaveCount(0);
+});
+
+test("cards drop the checkout button and the price-watch row and chart", async ({ page }) => {
+  const card = page.locator(".card", { hasText: "Example linen robe" });
+
+  // No checkout / add-checkout action on the card.
+  await expect(card.getByRole("button", { name: /checkout/i })).toHaveCount(0);
+  await expect(card.getByRole("link", { name: "Checkout" })).toHaveCount(0);
+
+  // The Low/High/Logs row, the sparkline chart, and the target readout are gone.
+  await expect(card.locator(".price-watch-row")).toHaveCount(0);
+  await expect(card.locator(".sparkline")).toHaveCount(0);
+  await expect(card.locator(".price-target")).toHaveCount(0);
+
+  // The current price and the up/down change indicator remain.
+  await expect(card.locator(".price-current")).toBeVisible();
+  await expect(card.locator(".price-delta")).toBeVisible();
+});
+
+test("the At Target stat tile is removed from the summary bar", async ({ page }) => {
+  await expect(page.locator("#stats .stat")).toHaveCount(3);
+  await expect(page.locator("#stats")).not.toContainText("At Target");
+});
+
 test("editing an item from the product page persists changes", async ({ page }) => {
   await page.locator(".card .title-button").first().click();
   await page.fill("#pageTitle", "Renamed robe");

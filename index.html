@@ -278,7 +278,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
       <div class="form-head">
         <div>
           <h2>Quick Save</h2>
-          <p class="sub">Start with the essentials. Add image, target price, and notes only when you need them.</p>
+          <p class="sub">Start with the essentials. Add image and notes only when you need them.</p>
         </div>
         <button class="btn soft small" id="toggleAddDetails" type="button">More Details</button>
       </div>
@@ -300,10 +300,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
         <input id="price" inputmode="decimal" placeholder="89.00">
       </div>
       <div class="optional-fields" id="addDetails">
-        <div class="field span-3">
-          <label for="targetPrice">Target</label>
-          <input id="targetPrice" inputmode="decimal" placeholder="65.00">
-        </div>
         <div class="field span-3">
           <label for="store">Store</label>
           <input id="store" placeholder="Nordstrom, Etsy, Target...">
@@ -332,10 +328,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
         <div class="field span-6">
           <label for="image">Image Link</label>
           <input id="image" inputmode="url" placeholder="https://...jpg or .png">
-        </div>
-        <div class="field span-6">
-          <label for="checkoutLink">Checkout Link</label>
-          <input id="checkoutLink" inputmode="url" placeholder="Paste checkout/cart link here">
         </div>
         <div class="field span-3">
           <label for="recipient">For</label>
@@ -623,27 +615,11 @@ function renderStats(){
   const saved = state.items.filter(i => i.status !== "purchased");
   const purchased = state.items.filter(i => i.status === "purchased");
   const total = saved.reduce((sum,item) => sum + normalizePrice(item.price), 0);
-  const targetHits = saved.filter(item => priceStats(item).atTarget).length;
   $("stats").innerHTML = `
     <div class="stat"><div class="num">${saved.length}</div><div class="lbl">Saved</div></div>
     <div class="stat"><div class="num">${money.format(total)}</div><div class="lbl">Estimated</div></div>
-    <div class="stat price-watch"><div class="num">${targetHits}</div><div class="lbl">At Target</div></div>
     <div class="stat"><div class="num">${purchased.length}</div><div class="lbl">Purchased</div></div>
   `;
-}
-function renderSparkline(history){
-  const prices = history.map(row => row.price).filter(Boolean);
-  if(!prices.length) return `<div class="spark-note">Add a price to start history.</div>`;
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  const span = Math.max(max - min, 1);
-  const bars = prices.map(price => {
-    const height = 18 + Math.round(((price - min) / span) * 24);
-    return `<span class="spark-bar" title="${money.format(price)}" style="height:${height}px"></span>`;
-  }).join("");
-  const first = history[0]?.date || "";
-  const last = history[history.length - 1]?.date || "";
-  return `<div class="sparkline" aria-label="Price history">${bars}</div><div class="spark-note">${attr(first)} to ${attr(last)}</div>`;
 }
 function renderCards(){
   const items = filteredItems();
@@ -652,19 +628,11 @@ function renderCards(){
     const idArg = attr(JSON.stringify(item.id));
     const stats = priceStats(item);
     const price = stats.current ? money.format(stats.current) : "Price TBD";
-    const target = stats.target ? money.format(stats.target) : "No target";
-    const low = stats.low ? money.format(stats.low) : "--";
-    const high = stats.high ? money.format(stats.high) : "--";
     const deltaClass = stats.delta < 0 ? "good" : stats.delta > 0 ? "warn" : "";
     const deltaText = stats.delta ? `${stats.delta < 0 ? "Down" : "Up"} ${money.format(Math.abs(stats.delta))}` : "No change";
     const img = item.image ? `<img src="${attr(item.image)}" alt="${attr(item.title)}" onerror="this.parentElement.innerHTML='<div class=&quot;empty&quot;>Image unavailable</div>'">` : `<div class="empty">Paste an image link to show this item here</div>`;
     const statusText = item.status === "purchased" ? "Purchased" : "Saved";
     const openHref = item.link || searchUrl("Google", item.searchQuery || item.title);
-    const checkoutHref = item.checkoutLink || "";
-    const checkoutAction = checkoutHref
-      ? `<a class="btn small sage" href="${attr(checkoutHref)}" target="_blank" rel="noopener">Checkout</a>`
-      : `<button class="btn small sage" type="button" onclick="openProductPage(${idArg})">Add Checkout</button>`;
-    const targetClass = stats.atTarget ? "gold" : "status-pill";
     return `
       <article class="card${item.status === "purchased" ? " purchased" : ""}">
         <div class="photo">${img}</div>
@@ -673,7 +641,6 @@ function renderCards(){
             <span class="pill">${attr(item.priority || "Maybe")}</span>
             <span class="pill sage">${attr(item.category || "Other")}</span>
             <span class="pill status-pill">${attr(statusText)}</span>
-            ${stats.atTarget ? `<span class="pill ${targetClass}">At Target</span>` : ""}
             ${item.recipient ? `<span class="pill pink">For ${attr(item.recipient)}</span>` : ""}
           </div>
           <div class="title"><button class="title-button" type="button" onclick="openProductPage(${idArg})" title="Edit ${attr(item.title)}">${attr(item.title)}</button></div>
@@ -684,19 +651,11 @@ function renderCards(){
                 <div class="price-current">${attr(price)}</div>
                 <div class="price-delta ${deltaClass}">${attr(deltaText)}</div>
               </div>
-              <div class="price-target">Target<br>${attr(target)}</div>
             </div>
-            <div class="price-watch-row">
-              <div class="price-mini"><span class="k">Low</span><span class="v">${attr(low)}</span></div>
-              <div class="price-mini"><span class="k">High</span><span class="v">${attr(high)}</span></div>
-              <div class="price-mini"><span class="k">Logs</span><span class="v">${stats.history.length}</span></div>
-            </div>
-            ${renderSparkline(stats.history)}
           </div>
           ${item.notes ? `<div class="notes">${attr(item.notes)}</div>` : ""}
           <div class="actions">
             <a class="btn small primary" href="${attr(openHref)}" target="_blank" rel="noopener">Open Listing</a>
-            ${checkoutAction}
             <button class="btn small ghost" type="button" onclick="openProductPage(${idArg})">Details</button>
             <button class="btn small ghost" type="button" onclick="togglePurchased(${idArg})">${item.status === "purchased" ? "Move Back" : "Mark Bought"}</button>
             <button class="btn small danger" type="button" onclick="deleteItem(${idArg})">Delete</button>
@@ -717,7 +676,7 @@ function render(){
 }
 function formValue(id){ return $(id).value.trim(); }
 function clearForm(){
-  ["title","price","targetPrice","link","checkoutLink","image","store","recipient","notes"].forEach(id => $(id).value = "");
+  ["title","price","link","image","store","recipient","notes"].forEach(id => $(id).value = "");
   $("category").value = "Fashion";
   $("priority").value = "Love";
   $("productSearch").value = "";
@@ -731,9 +690,7 @@ function saveFromForm(event){
   const payload = {
     title: formValue("title"),
     price: formValue("price"),
-    targetPrice: formValue("targetPrice"),
     link: normalizeUrl(formValue("link")),
-    checkoutLink: normalizeUrl(formValue("checkoutLink")),
     image: normalizeUrl(formValue("image")),
     store: formValue("store"),
     category: formValue("category"),
@@ -774,7 +731,6 @@ function setProductPreview(src){
 function renderProductSummary(item){
   const stats = priceStats(item);
   const price = stats.current ? money.format(stats.current) : "Price TBD";
-  const low = stats.low ? money.format(stats.low) : "--";
   const deltaClass = stats.delta < 0 ? "good" : stats.delta > 0 ? "warn" : "";
   const deltaText = stats.delta ? `${stats.delta < 0 ? "Down" : "Up"} ${money.format(Math.abs(stats.delta))}` : "No price change yet";
   $("productPageSummary").innerHTML = `
@@ -790,11 +746,9 @@ function renderProductSummary(item){
       </div>
     </div>
     <div class="price-watch-row">
-      <div class="price-mini"><span class="k">Lowest</span><span class="v">${attr(low)}</span></div>
       <div class="price-mini"><span class="k">Store</span><span class="v">${attr(item.store || "None")}</span></div>
       <div class="price-mini"><span class="k">For</span><span class="v">${attr(item.recipient || "Me")}</span></div>
     </div>
-    ${renderSparkline(stats.history)}
   `;
 }
 function openProductPage(id){
