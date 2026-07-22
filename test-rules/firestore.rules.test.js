@@ -5,18 +5,22 @@ import {
 } from "@firebase/rules-unit-testing";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 import { beforeAll, afterAll, beforeEach, describe, it } from "vitest";
 
 // Requires the Firestore emulator. Run via `npm run test:rules`, which wraps
 // this with `firebase emulators:exec` so FIRESTORE_EMULATOR_HOST is set.
 
 const WISH_LIST_DOC = "shopping/curated-wish-list";
+const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)));
+const rulesPath = resolve(repoRoot, "firestore.rules");
 let testEnv;
 
 beforeAll(async () => {
   testEnv = await initializeTestEnvironment({
     projectId: "demo-wishlist",
-    firestore: { rules: readFileSync("firestore.rules", "utf8") }
+    firestore: { rules: readFileSync(rulesPath, "utf8") }
   });
 });
 
