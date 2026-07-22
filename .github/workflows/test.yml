@@ -84,3 +84,13 @@ jobs:
 
       - name: Run Firestore rules tests
         run: npm run test:rules
+        env:
+          DEBUG: firebase-tools:*
+
+      - name: Upload Firestore debug logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: firestore-debug-logs
+          path: firestore-debug.log
+          retention-days: 7
